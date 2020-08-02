@@ -29,8 +29,8 @@ for model_name in tqdm.tqdm(model_names):
     N_tilde = sum([np.prod(w.shape) for w in full_model.trainable_weights])
     step = int(weight_path.split('/')[-1].split('.')[0].split('_')[1])
 
-    y_train_hat = full_model(X_train)
-    y_test_hat = full_model(X_test)
+    y_train_hat = full_model(X_train).numpy()
+    y_test_hat = full_model(X_test).numpy()
 
     result = {
         "P": P,
