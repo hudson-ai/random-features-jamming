@@ -113,7 +113,7 @@ class SaveCallback(tf.keras.callbacks.Callback):
         Allows for logarithmically spaced model saving and checkpointing
     """
 
-    def __init__(self, filepath, save_every=1, logarithmic=False, batches_per_epoch=batches_per_epoch):
+    def __init__(self, filepath, save_every=1, logarithmic=False, batches_per_epoch=1):
         self.filepath = filepath
         self.save_every = save_every
         self.logarithmic = logarithmic
