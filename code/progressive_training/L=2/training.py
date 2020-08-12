@@ -99,7 +99,7 @@ def make_model(N, L, d, loss='squared_hinge', optimizer='adam'):
     h = find_h(N, L, d, bias=False)
     model = tf.keras.Sequential([
         tf.keras.layers.InputLayer(d, name='inputs'),
-        [tf.keras.layers.Dense(h, use_bias=False, activation='tanh', name=f'intermediate_{i}') for i in range(L)],
+        *[tf.keras.layers.Dense(h, use_bias=False, activation='tanh', name=f'intermediate_{i}') for i in range(L)],
         tf.keras.layers.Dense(1, use_bias=False, name='outputs')
     ])
     def accuracy(y_true, y_pred):
