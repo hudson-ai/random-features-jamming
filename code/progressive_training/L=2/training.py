@@ -164,8 +164,8 @@ except:
 print('Done.')
 
 num_Ns = 100
-max_N = 1.1*P #find_N(P, L, d)
-Ns = np.unique(np.logspace(0, np.log10(max_N)/2, num_Ns).astype(int))
+max_N = find_N(P, L, d) #I want to see the case where h = N_del, which may happen as high as h=P (VERY overparameterized)
+Ns = np.unique(np.logspace(0, np.log10(max_N), num_Ns).astype(int))
 for N in tqdm.tqdm(Ns):
     model_directory = f'models/P={P}_d={d}_N={N}_L={L}_mnist'
 
