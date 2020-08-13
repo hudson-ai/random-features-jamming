@@ -7,53 +7,16 @@
 # Post-Processing
 import pickle
 import pandas as pd 
+import numpy as np
 import os
 
 import tensorflow as tf
 
 from matplotlib import pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
 
 from sklearn.svm import LinearSVC as SVM
 
-import tqdm as tqdm
-
-get_ipython().run_line_magic('config', "InlineBackend.figure_format = 'svg'")
-
-
-# In[97]:
-
-
-from matplotlib import colors as mcolors
-from matplotlib.colors import LinearSegmentedColormap
-
-cmap = LinearSegmentedColormap.from_list(
-    'Mei2019', 
-    np.array([
-        (243, 232, 29),
-        (245, 173, 47),
-        (140, 193, 53),
-        (50,  191, 133),
-        (23,  167, 198),
-        (36,  123, 235),
-        (53,  69,  252),
-        (52,  27,  203)
-    ])/255., 
-    N=256
-)
-
-# cmap = cc.m_bmy
-
-gradient = np.linspace(0, 1, 256)
-gradient = np.vstack((gradient, gradient))
-fig = plt.figure(figsize=(6,.5))
-img = plt.imshow(gradient, aspect='auto', cmap=cmap)
-title = plt.title('Colormap stolen from Mei2019')
-
-norm=mcolors.LogNorm()
-
-
-# In[9]:
+import tqdm.auto as tqdm
 
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
@@ -65,7 +28,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 model_dir = 'models'
 model_names = os.listdir(model_dir)
 X_train, X_test, y_train, y_test = pickle.load(open('mnist.pkl', 'rb'))
-lambs = np.logspace(-15, -3, num=5)
+lambs = np.logspace(-15, -3, num=13)
 
 results = []
 
@@ -125,73 +88,5 @@ for model_name in tqdm.tqdm(model_names):
         }
         results.append(result)
         
-# pickle.dump(results, open('results.pkl', 'wb'))
-
-
-# In[90]:
-
-
-result_df = pd.DataFrame(results)
-
-
-# In[91]:
-
-
-result_df.head()
-
-
-# In[92]:
-
-
-force = lambda y,f: 1 - y*f
-loss = lambda y,f: np.mean(np.maximum(0, force(y,f))**2, -1)
-N_del = lambda y,f: np.sum(force(y,f) >= 0, -1)
-
-result_df['test_loss'] = result_df.y_test_hat.apply(lambda f: loss(y_test, f))
-result_df['train_loss'] = result_df.y_train_hat.apply(lambda f: loss(y_train, f))
-result_df['N_del'] = result_df.y_train_hat.apply(lambda f: N_del(y_train, f))
-
-result_df['N/P'] = result_df['N']/result_df['P']
-result_df['P/N'] = result_df['P']/result_df['N']
-result_df['N_del/P'] = result_df['N_del']/result_df['P']
-result_df['N_del/N'] = result_df['N_del']/result_df['N']
-
-
-# In[101]:
-
-
-data = result_df.sort_values('lambda', ascending=False)
-plt.scatter(data['N_del/N'], data['test_loss'], c=data['lambda'], alpha=.7, cmap=cmap, norm=norm)
-plt.yscale('log')
-plt.xscale('log')
-plt.colorbar(label=r'$\lambda$ (regularization)')
-
-
-# In[ ]:
-
-
-for lamb in result_df['lambda'].unique():
-    data = 
-    plt.scatter(data['N_del/N'], data['test_loss'], c=data['lambda'], alpha=.7, cmap=cmap, norm=norm)
-    plt.yscale('log')
-    plt.xscale('log')
-    plt.colorbar(label=r'$\lambda$ (regularization)')
-
-
-# In[96]:
-
-
-min(result_df['lambda'])
-
-
-# In[99]:
-
-
-
-
-
-# In[ ]:
-
-
-
+pickle.dump(results, open('results_different_lambdas.pkl', 'wb'))
 
