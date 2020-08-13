@@ -97,6 +97,7 @@ def find_N(h, L, d, n=1, bias=False):
 
 def make_model(N, L, d, loss='squared_hinge', optimizer='adam'):
     h = find_h(N, L, d, bias=False)
+    assert h > 0, f"N={N}, L={L}, d={d} corresponds to h={h}. Invalid: h must be > 0"
     model = tf.keras.Sequential([
         tf.keras.layers.InputLayer(d, name='inputs'),
         *[tf.keras.layers.Dense(h, use_bias=False, activation='tanh', name=f'intermediate_{i}') for i in range(L)],
@@ -164,8 +165,9 @@ except:
 print('Done.')
 
 num_Ns = 100
+min_N = find_N(1, L, d) #Smallest N can be corresponds to h = 0
 max_N = find_N(P, L, d) #I want to see the case where h = N_del, which may happen as high as h=P (VERY overparameterized)
-Ns = np.unique(np.logspace(0, np.log10(max_N), num_Ns).astype(int))
+Ns = np.unique(np.logspace(np.log10(min_N), np.log10(max_N), num_Ns).astype(int))
 for N in tqdm.tqdm(Ns):
     model_directory = f'models/P={P}_d={d}_N={N}_L={L}_mnist'
 
