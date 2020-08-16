@@ -2,7 +2,7 @@
 import pickle
 import pandas as pd 
 import os
-
+import numpy as np
 import tensorflow as tf
 
 from matplotlib import pyplot as plt
@@ -13,6 +13,8 @@ from jax import hessian, jacobian, numpy as jnp
 
 import tqdm.auto as tqdm
 
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 model_dir = 'models'
 model_names = os.listdir(model_dir)
@@ -45,8 +47,8 @@ for model_name in tqdm.tqdm(model_names):
             full_model.get_layer('intermediate')
         ])
 
-        train_features = intermed_model(X_train)
-        test_features = intermed_model(X_test)
+        train_features = intermed_model(X_train).numpy()
+        test_features = intermed_model(X_test).numpy()
 
         # Liblinear loss = .5*sum_{i=1}^N[w_i^2] + C*sum_{j=1}^P[y_j - sum_{i=1}^N w_i*x_ji]
         # Mei et al loss = (N*lam/d)*sum_{i=1}^N[w_i^2] + (1/P)*sum_{j=1}^P[y_j - sum_{i=1}^N w_i*x_ji]
@@ -65,7 +67,7 @@ for model_name in tqdm.tqdm(model_names):
         H = hessian(U)(w)
         jac_del = jacobian(force)(w)
         H0 = jnp.einsum('ni,nj->ij', jac_del, jac_del)
-        Hp = H - H0
+        HP = H - H0
         
         eigs = np.linalg.eigvalsh(H)
         eigs0 = np.linalg.eigvalsh(H0)
