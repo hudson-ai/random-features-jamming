@@ -13,8 +13,8 @@ from jax import hessian, jacobian, numpy as jnp
 
 import tqdm.auto as tqdm
 
-
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+def normalize(a, axis=None):
+    return a / np.linalg.norm(a, axis=axis, keepdims=True)
 
 model_dir = 'models'
 model_names = os.listdir(model_dir)
@@ -22,7 +22,6 @@ X_train, X_test, y_train, y_test = pickle.load(open('mnist.pkl', 'rb'))
 lamb = 1e-13
 
 results = []
-
 
 
 for model_name in tqdm.tqdm(model_names):
@@ -49,6 +48,11 @@ for model_name in tqdm.tqdm(model_names):
 
         train_features = intermed_model(X_train).numpy()
         test_features = intermed_model(X_test).numpy()
+        
+        # Normalize features to ball of radius sqrt(h)
+        h = len(train_features)
+        train_features = np.sqrt(h) * normalize(train_features, axis=1)
+        test_features = np.sqrt(h) * normalize(test_features, axis=1)
 
         # Liblinear loss = .5*sum_{i=1}^N[w_i^2] + C*sum_{j=1}^P[y_j - sum_{i=1}^N w_i*x_ji]
         # Mei et al loss = (N*lam/d)*sum_{i=1}^N[w_i^2] + (1/P)*sum_{j=1}^P[y_j - sum_{i=1}^N w_i*x_ji]
@@ -88,5 +92,5 @@ for model_name in tqdm.tqdm(model_names):
 
         }
         results.append(result)
-        
+    del full_model #Garbage collection       
 pickle.dump(results, open('results_with_hessian.pkl', 'wb'))
