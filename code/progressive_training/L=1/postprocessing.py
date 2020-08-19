@@ -50,7 +50,7 @@ for model_name in tqdm.tqdm(model_names):
         test_features = intermed_model(X_test).numpy()
         
         # Normalize features to ball of radius sqrt(h)
-        h = len(train_features)
+        h = train_features.shape[1]
         train_features = np.sqrt(h) * normalize(train_features, axis=1)
         test_features = np.sqrt(h) * normalize(test_features, axis=1)
 
