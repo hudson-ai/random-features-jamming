@@ -57,7 +57,7 @@ for model_name in tqdm.tqdm(model_names):
 
         # Liblinear loss = .5*sum_{i=1}^N[w_i^2] + C*sum_{j=1}^P[y_j - sum_{i=1}^N w_i*x_ji]
         # Mei et al loss = (N*lam/d)*sum_{i=1}^N[w_i^2] + (1/P)*sum_{j=1}^P[y_j - sum_{i=1}^N w_i*x_ji]
-        C = d/(2*N*P*lamb)
+        C = d/(2*h*P*lamb)
 
         svm = SVM(penalty='l2', loss='squared_hinge', dual=False, fit_intercept=False, C=C)
         svm = svm.fit(train_features, y_train)
