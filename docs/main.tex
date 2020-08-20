@@ -1,5 +1,7 @@
-\documentclass[a4paper, 12pt, titlepage]{article}
-\usepackage[margin=2.0cm]{geometry}
+\documentclass[a4paper, 12pt]{article}
+\usepackage{titling}
+\usepackage[margin=3.0cm]{geometry}
+\usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{lipsum}
@@ -16,36 +18,73 @@
     M.Sc.\ in Complex Systems Modelling
 }
 \date{\today}
-\maketitle
 
+\begin{titlingpage}
+\maketitle
 \begin{abstract}
 \lipsum[1]
 \end{abstract}
+\end{titlingpage}
 
 \section{Introduction}
-Neural networks are one of the most highly successful classes of models in modern machine and statistical learning. While there is a rich body of literature which empirically examines the ability of neural networks to fit to and generalize from data, the field is lacking a cohesive theoretical framework for designing these networks and for understanding their incredible success. \\
+Neural networks are one of the most highly successful classes of models in modern machine learning. While there is a rich body of literature which empirically examines the ability of neural networks to fit to and generalize from data, the field is lacking a cohesive theoretical framework for designing these networks and for understanding their incredible success. \\
 
 \subsection{Motivation}
 
-One of the most baffling features of modern neural networks is that they operate in a regime that is at odds with a main tenet of classical statistical learning, the bias-variance trade-off. The bias-variance trade-off implies that more expressive models are likely to find spurious patterns in data, and therefore practitioners should seek to build models that are ``as simple as possible, but no simpler." Neural networks, however, typically operate in an extremely over-parameterized regime, containing many more parameters than there are data. Neural networks have been shown to be so highly expressive that they are able to interpolate data and perfectly classify training data, even when labels have been replaced with pure noise \cite{zhangUnderstandingDeepLearning2017}. Despite their complexity and extreme expressiveness, they are able to generalize extremely well in practice, often outperforming classical (under-parameterized) models on test data. \\
+Until recently, one of the most poorly understood features of modern neural networks is their operation in a regime that is seemingly at odds with the bias-variance trade-off, a main tenet of classical statistical learning. The bias-variance trade-off implies that more expressive models are likely to find spurious patterns in data, and therefore practitioners should seek to build models that are ``as simple as possible, but no simpler." Neural networks, however, typically operate in an extremely over-parameterized regime, containing many more parameters than there are data. Neural networks have been shown to be so highly expressive that they are able to interpolate data and perfectly classify training data, even when labels have been replaced with pure noise \cite{zhangUnderstandingDeepLearning2017}. Despite their complexity and extreme expressiveness, they are able to generalize extremely well in practice, often outperforming classical models on test data. \\
 
-Recent work \cite{belkinReconcilingModernMachine2019} has characterised this phenomena in terms of the so-called `double-descent' curve, in which test (generalization) error as a function of model complexity follows a U-shaped curve, as is predicted by the classical bias-variance trade-off. The classical description holds up to the interpolation threshold, where models are able to obtain perfect performance on training data at the cost of extremely high test error. Beyond this threshold, however, the test error again decreases, and the global optimum often occurs deep in the over-parameterized regime at the point of `infinite' complexity. This behavior is far from unique to neural networks and has been empirically shown to occur in other contexts, for example in random forests and random feature models \cite{belkinUnderstandDeepLearning2018, belkinReconcilingModernMachine2019}.\\
+Recent work \cite{belkinReconcilingModernMachine2019} has characterised this phenomena in terms of the so-called ``double-descent" curve, which is visually represented in figure \ref{doubledescent}. Two distinct regimes of model complexity are separated by the interpolation threshold, the point at which models are able to obtain perfect performance on training data at the cost of extremely high test error. To the left of this threshold is the under-parameterized regime, in which the classical bias-variance trade-off holds. As model complexity increases, generalization error follows a U-shaped curve, decreasing to a minimum before increasing to a peak at the interpolation threshold, where classical ``overfitting" occurs. To the right of this threshold, however, the generalization error again decreases. The global optimum often occurs deep in the over-parameterized regime, sometimes in the limit of ``infinite" complexity. This double-descent phenomenology is far from unique to neural networks; it has been observed in other contexts, for example in random forests, random feature models, and kernel machines \cite{ belkinReconcilingModernMachine2019, belkinUnderstandDeepLearning2018}.\\
 
-Study of the training dynamics of neural networks undergoing stochastic gradient descent (SGD) in \cite{baity-jesiComparingDynamicsDeep2019} and \cite{geigerJammingTransitionParadigm2019} has shown that the interpolation threshold marks a phase transition between two different dynamical regimes, corresponding to the under- and over-parameterized regimes described in the double-descent literature. The over-parameterized regime is characterized by the ability of a neural network to achieve arbitrarily low loss on the training set, but because loss functions are generally not convex, it is not obvious what the necessary conditions are to guarantee that gradient descent can fit well to the training data. By appealing to analogies between the physical phenomena of jamming in disordered solids and the phase transition observed at the interpolation threshold in neural networks, \cite{geigerJammingTransitionParadigm2019} and \cite{spiglerJammingTransitionOverparametrization2019} predict and empirically test a characterization of the training dynamics near and beyond the threshold. 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{docs/assets/double_descent_reconciling.png}
+\caption{Visual depiction of the double descent curve, adapted from \cite{belkinReconcilingModernMachine2019}. The ``classical" U-shaped bias-variance trade-off is seen in the under-parameterized regime to the left of the interpolation threshold, and a second descent is seen in the over-parameterized regime to the right. Training error (``risk'') is represented with a dashed line, and test error is represented with a solid line.}
+\label{doubledescent}
+\end{figure}
+
+
+Study in \cite{baity-jesiComparingDynamicsDeep2019} and \cite{geigerJammingTransitionParadigm2019} of the training dynamics of neural networks undergoing stochastic gradient descent (SGD)  has revealed deep qualitative similarities between the interpolation threshold and the ``jamming" phase transition in granular solids. By appealing to analogies between the physical phenomena of jamming and the separation of the under- and over-parameterized regimes by the interpolation threshold in neural networks, \cite{geigerJammingTransitionParadigm2019} and \cite{spiglerJammingTransitionOverparametrization2019} predict and empirically test a characterization of the training dynamics near and beyond the threshold. 
+
+TODO: More here. What are the analogies? 
 
 \subsection{Goals and Roadmap}
-The existing literature equates the jamming transition to the interpolation threshold and the corresponding cusp in test error that characterises the double-descent curve. However, random features models appear to recover the double-descent structure without displaying the phenomenology of elliptical jamming.
 
-The aim of this paper is to explore the extent to which random features models recover the qualitative behaviors described in the jamming literature and to examine the role of feature learning in the jamming and double-descent phenomenon. 
+The goal of this paper is to examine a recently popular model for understanding neural networks, the "random features" model. The random features model displays the characteristics of double descent independently of the training dynamics used. We therefore explore whether the jamming phenomenology is recovered by the random features model and the extent to which feature learning plays a role in its emergence.\\
+
+
+Still poorly understood:\\
+- why, when, and how feature learning improves generalization\\
+- how the location of the interpolation threshold is affected by feature learning\\
+- how the ability of a network to build quality features depends on architecture (and relationship to inductive bias) \\
+- double descent: a property of dynamics or a property of features?\\
+- the role that feature learning plays in the emergence of the jamming phenomenology\\
+
+This paper will conduct a review of... and then explain the novel contributions, then... OUTLINE GOES HERE
 
 \section{Background}
 
-\subsection{The Jamming Transition: Loss Landscape and Generalization}
-\subsection{Random Features, Kernel Methods, and Deep Learning}
 \subsection{Double Descent and Random Features}
+
+\subsection{Random Features, Kernel Methods, and Deep Learning}
+Further recent study has examined what the necessary conditions are for a neural network to effectively ``learn" from training data and achieve arbitrarily low training error. Asymptotic analysis of extremely wide neural networks in \cite{jacotNeuralTangentKernel2018} and \cite{leeWideNeuralNetworks2019} has revealed that ...
+
+
+
+
+A related and similarly poorly-understood feature of modern neural networks is what the necessary and sufficient conditions are for them to be able to achieve arbitrarily low training error. 
+
+Because loss functions are generally not convex, it is not obvious what the necessary conditions are to guarantee that gradient descent can fit well to the training data. 
+
+
+Jamming as a paradigm..?
+
 \subsection{Feature Learning}
 
+\subsection{The Jamming Transition: Loss Landscape and Generalization}
+
+
 \section{Methods and Results}
+
 \section{Discussion}
 
 \printbibliography
