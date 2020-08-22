@@ -64,20 +64,35 @@ This paper will conduct a review of... and then explain the novel contributions,
 \section{Background}
 \subsection{Deep Learning, Random Features, and Kernel Methods}
 
-Recent study of neural networks in the infinite-with limit has shown that under gradient-descent on the network parameters, the outputs follow the kernel gradient of the loss functional with respect to the ``Neural Tangent Kernel" (NTK) \cite{jacotNeuralTangentKernel2018}. For a particular scaling choice of the final layer weights, the NTK converges to a deterministic limit that depends only on the network architecture, is independent of parameter initialization, and is fixed throughout training. This scaling choice has been dubbed the ``lazy learning regime" due to this invariance. Experimental evidence showed a good agreement between the limiting kernel and networks trained in the large but finite width setting, and further work in \cite{allen-zhuConvergenceTheoryDeep2019} formalized this connection by showing that overparameterized networks of finite width converge to a global optimum given by the NTK.\\
+Recent study of neural networks in the infinite-with limit has yielded an important connection between wide neural networks and kernel methods. In particular, \cite{jacotNeuralTangentKernel2018} showed that gradient-descent on network parameters corresponds to kernel gradient-descent on network outputs with respect to the so-called ``Neural Tangent Kernel" (NTK). As network width tends to infinity, the NTK converges to a deterministic limit that depends only on the network architecture, is independent of parameter initialization, and is constant throughout training. This limit is referred to as the ``lazy learning" regime because the NTK does not depend on the data-set. \cite{jacotNeuralTangentKernel2018} experimentally found good agreement between predictions made by the limiting kernel and by networks trained in the large but finite width setting, and further work in \cite{allen-zhuConvergenceTheoryDeep2019} showed that this agreement should persist for finite but overparameterized networks.
 
-The lazy learning regime admits an alternative representation in which the network outputs at any time during training can be expressed as a first-order Taylor expansion of the network about its initial weights \cite{leeWideNeuralNetworks2019}. In other words, networks in the lazy-learning regime are linear models of random features gien by the gradient of the network with respect to its parameters at initialization. For a network $f_\theta$ with initial parameters $\theta_0$ and an initialization such that $f_{\theta_0} \approx 0$, we have that
+In the the lazy learning regime, network outputs can be expressed as a first-order Taylor expansion of the network about its initial weights \cite{leeWideNeuralNetworks2019} at any time during training. For a network $f_\theta$ with initial parameters $\theta_0$ and an initialization such that $f_{\theta_0} \approx 0$, we have that
 \begin{equation}
     f_\theta(x) \approx \nabla_\theta \left.f_\theta(x)\right|_{\theta=\theta_0} \cdot (\theta - \theta_0)\,.
 \end{equation}
-The NTK corresponds to the inner product in this feature space as the number of features goes to infinity, suggesting that finite-width networks behave like finite-rank approximations to the limiting kernel machine as seen in other random-features methods such as random Fourier features \cite{rahimiRandomFeaturesLargeScalea}.
+In other words, networks in the lazy-learning regime are linear models of random features given by the gradient of the network with respect to its parameters at initialization. The inner product in this random feature space converges to the limiting NTK as the number of parameters goes to infinity, suggesting that finite-width networks can be conceptualized as finite-rank approximations to the limiting kernel machine, connecting finite-width networks to the random Fourier features models studied in \cite{rahimiRandomFeaturesLargeScale2008}.
 
 \subsection{Double Descent and Random Features}
+The lazy learning regime offers a greatly simplified approach to analyzing the training dynamics and generalization capabilities of wide neural networks, allowing theoretical explanations of the ability of overparameterized neural networks to reach global minima in polynomial time \cite{allen-zhuConvergenceTheoryDeep2019} as well as analysis of the emergence of the cusp in generalization error at the interpolation threshold \cite{meiGeneralizationErrorRandom2019, geigerScalingDescriptionGeneralization2019} and a ``modern" treatment of the bias-variance relationship beyond the threshold \cite{dascoliDoubleTroubleDouble2020}. 
+
+TODO: DETAIL
+
+\subsection{Feature Learning}
+
+Despite its success in explaining some of the crucial features of training and generalization in neural networks, the lazy learning perspective misses a crucial aspect of modern neural networks and deep learning: the role of ``feature learning."  \cite{chizatLazyTrainingDifferentiable2020} argues that the lazy learning phenomenon is due to an implicitly chosen scaling factor of of model parameters at initialization. By making scaling scaling factor explicit, \cite{}
+\cite{chizatLazyTrainingDifferentiable2020}
 
 
 
 
 
+
+
+
+
+
+
+\subsection{The Jamming Transition: Loss Landscape and Generalization}
 
 A related and similarly poorly-understood feature of modern neural networks is what the necessary and sufficient conditions are for them to be able to achieve arbitrarily low training error. 
 
@@ -85,11 +100,6 @@ Because loss functions are generally not convex, it is not obvious what the nece
 
 
 Jamming as a paradigm..?
-
-\subsection{Feature Learning}
-
-\subsection{The Jamming Transition: Loss Landscape and Generalization}
-
 
 \section{Methods and Results}
 
