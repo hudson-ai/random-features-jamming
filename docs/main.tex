@@ -79,8 +79,9 @@ TODO: DETAIL
 
 \subsection{Feature Learning}
 
-Despite its success in explaining some of the crucial features of training and generalization in neural networks, the lazy learning perspective misses a crucial aspect of modern neural networks and deep learning: the role of ``feature learning."  \cite{chizatLazyTrainingDifferentiable2020} argues that the lazy learning phenomenon is due to an implicitly chosen scaling factor of of model parameters at initialization. By making scaling scaling factor explicit, \cite{}
-\cite{chizatLazyTrainingDifferentiable2020}
+Despite its success in explaining some of the crucial features of training and generalization in neural networks, the lazy learning perspective misses a crucial aspect of modern neural networks and deep learning: the role of ``feature learning."  \cite{chizatLazyTrainingDifferentiable2020} argues that the lazy-learning phenomenon occurs due to an implicitly chosen factor controlling how model parameters at initialization scale against network width. By making this scaling factor explicit, it is possible to force a network to train in either the lazy-learning regime or the ``feature-learning" regime, in which the NTK evolves throughout training and depends on the data-set. The feature-learning regime is also referred to as the ``mean-field" limit and is explored in some previous works, e.g. \cite{meiMeanFieldView2018}. While the dynamics of lazy learning can be described by a linear ordinary differential equation (ODE) of the network outputs and the constant NTK, the dynamics of feature-learning must be described by a more complex partial differential equation (PDE) which also depends on the distribution of the activations of the hidden neurons.\\
+
+ The role of feature learning in the ability of a neural network to generalize to unseen data is still poorly understood. While \cite{chizatLazyTrainingDifferentiable2020} shows evidence that feature learning improves the generalization performance of convolutional neural networks (CNNs) in comparison to those trained in the lazy-learning regime, \cite{dascoliDoubleTroubleDouble2020} found the opposite relationship in fully-connected networks (FCNs), leading the latter authors to the conclusion that ``network architecture and data structure play an important role in determining which regime is better."  
 
 
 
