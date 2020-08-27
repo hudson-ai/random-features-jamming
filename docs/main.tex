@@ -1,4 +1,4 @@
-\documentclass[a4paper, 12pt]{article}
+\documentclass[a4paper, 11pt]{article}
 \usepackage{titling}
 \usepackage[margin=3.0cm]{geometry}
 \usepackage{graphicx}
@@ -26,6 +26,8 @@
 \end{abstract}
 \end{titlingpage}
 
+\tableofcontents
+
 \section{Introduction}
 Despite the remarkable success of neural networks in a variety of contexts such as vision, speech, natural language processing, drug discovery, and genomics \cite{lecunDeepLearning2015}, there is no cohesive theoretical explanation for this success; the understanding and design of these networks has been almost exclusively guided by empirical work. \\
 
@@ -35,7 +37,7 @@ Why are neural networks able to fit to and generalize from data so well? What cr
 
 \subsection{Double Descent: ``Classical" vs. ``Modern" Regimes}
 
-The success of modern neural networks is in stark contrast to a cornerstone of classical statistical learning: the so-called ``bias-variance trade-off." The bias-variance trade-off holds that more expressive models are more likely to find spurious patterns in data and generalize poorly to new samples, a behavior referred to as ``over-fitting." The trade-off implies that practitioners should seek to find the sweet-spot by building models that are ``as simple as possible, but no simpler." Neural networks, however, typically operate in a highly over-parameterized regime, containing many more parameters than there are data. Neural networks have been shown to be so highly expressive that they are able to interpolate and perfectly classify training data, even when labels have been replaced with pure noise \cite{zhangUnderstandingDeepLearning2017}. Classical statistical learning suggests that neural networks should therefore be extremely prone to over-fitting, but despite their complexity and expressiveness, they are able to generalize extremely well in practical settings.\\
+The success of modern neural networks is in stark contrast to a tenet of classical statistical learning: the so-called ``bias-variance trade-off." The bias-variance trade-off holds that more expressive models are more likely to find spurious patterns in data and generalize poorly to new samples, a behavior referred to as ``over-fitting." The trade-off implies that practitioners should seek to find the sweet-spot by building models that are ``as simple as possible, but no simpler." Neural networks, however, typically operate in a highly over-parameterized regime, containing many more parameters than there are data. Neural networks have been shown to be so highly expressive that they are able to interpolate and perfectly classify training data, even when labels have been replaced with pure noise \cite{zhangUnderstandingDeepLearning2017}. Classical statistical learning suggests that neural networks should therefore be extremely prone to over-fitting, but despite their complexity and expressiveness, they are able to generalize extremely well in practical settings.\\
 
 Recent work \cite{belkinReconcilingModernMachine2019} has characterised this phenomena in terms of the so-called ``double-descent" curve, visually represented in figure \ref{doubledescent}. Two distinct regimes of model complexity are separated by the interpolation threshold, the point beyond which models are able to obtain perfect performance on training data. To the left of this threshold is the ``classical" or ``under-parameterized" regime, in which the bias-variance trade-off holds and generalization error follows a U-shaped curve, decreasing to a minimum before increasing to a peak at the interpolation threshold. Past this threshold, however, is the ``modern," ``interpolating," or ``over-parameterized" regime, in which the generalization error again decreases, with the global optimum being found deep in the over-parameterized regime, sometimes in the limit of infinite complexity. This double-descent phenomenology is far from unique to neural networks and has been observed in a variety of other model classes that are expressive enough to perfectly interpolate training data, including random forests, random feature models, and kernel machines \cite{ belkinReconcilingModernMachine2019, belkinUnderstandDeepLearning2018}. Several open questions remain about this modern regime: What are the sufficient conditions for training data to be well fitted and for interpolation to begin? What causes generalization to improve beyond this threshold?
 
@@ -50,11 +52,11 @@ Recent work \cite{belkinReconcilingModernMachine2019} has characterised this phe
 
 \subsection{The Jamming Transition}
 
-It is no surprise that highly expressive models, such as over-parameterized neural networks, have global optima associated with arbitrarily small training loss; however, it is highly non-trivial that they are able to attain this vanishing loss without getting stuck in local minima, due to their loss landscapes being generally non-convex or non-smooth in the case of ReLU activations. There are strong similarities between neural networks and statistical-physics models of systems with many interacting components, in particular mean-field glassy systems, which take an exponentially long time (in the number of parameters) to relax to global minima due to extremely rough loss landscapes with many local minima \cite{choromanskaLossSurfacesMultilayer}. These similarities suggest that networks trained with stochastic gradient descent (SGD) from random initialization should converge to high and wide minima despite the existence of deeper local and global minima. In practice, however, SGD almost never encounters any such obstacles, and global minima are easily found \cite{goodfellowQualitativelyCharacterizingNeural2015}.\\
+It is no surprise that highly expressive models, such as over-parameterized neural networks, have global optima associated with arbitrarily small training loss. However, due to their generally non-convex and non-smooth loss landscapes, it is highly non-trivial local optimization methods, such as stochastic gradient descent (SGD), are able to attain vanishing loss without getting stuck in local minima. There are strong similarities between neural networks with their many parameters and models in statistical-physics with many interacting components, in particular mean-field glassy systems, which take an exponentially long time (in the number of parameters) to relax to global minima due to extremely rough loss landscapes with many local minima \cite{choromanskaLossSurfacesMultilayer}. These similarities suggest that networks trained with SGD from random initialization should converge to high and wide minima despite the existence of deeper local and global minima. In practice, however, SGD almost never encounters any such obstacles, and global minima are easily found \cite{goodfellowQualitativelyCharacterizingNeural2015}.\\
 
-Studying the training dynamics of neural networks undergoing SGD, \cite{baity-jesiComparingDynamicsDeep2019} found that while under-parameterized networks exhibit the hallmarks of glassy dynamics, over-parameterized networks behave in a qualitatively different manner and have loss landscapes of a different statistical structure. On the basis of this finding, the authors conjectured the existence of a phase transition separating these regimes, sharing similarities to the ``jamming" phase transition by which particles form a disordered solid as their density is increased. A similar jamming transition had previously been found separating easy and hard algorithmic phases in several computational optimization problems, including the perceptron \cite{krzakalaLandscapeAnalysisConstraint2007,zdeborovaPhaseTransitionsColoring2007,franzUniversalitySATUNSATJamming2017}. In \cite{geigerJammingTransitionParadigm2019} and \cite{spiglerJammingTransitionOverparametrization2019}, the authors empirically explore the boundary between the under- and over-parameterized regions of neural networks, finding that their behavior near the interpolation threshold does, in fact, share similarities to jamming, falling in the same universality class as elliptical particles (in contrast to the jamming of spherical particles as is seen in the perceptron). In particular, they found that this transition is sharp and has a discontinuous jump in the number of unsatisfied constraints, i.e. the number of data that are poorly fit, at the boundary. They furthermore argue that the number of unsatisfied constraints as a fraction the number of degrees of freedom is not sufficiently large enough to form local minima in the overparameterized regime, offering a simple explanation as to why such networks do not get stuck.
+Studying the training dynamics of neural networks undergoing SGD, \cite{baity-jesiComparingDynamicsDeep2019} found that although under-parameterized networks exhibit the hallmarks of glassy dynamics, over-parameterized networks behave qualitatively differently and have loss landscapes of a different statistical structure. On the basis of this finding, the authors conjectured the existence of a phase transition separating these regimes, sharing similarities to the ``jamming" phase transition by which particles form a disordered solid as their density is increased. A similar jamming transition had previously been found separating easy and hard algorithmic phases in several computational optimization problems, including the perceptron \cite{krzakalaLandscapeAnalysisConstraint2007,zdeborovaPhaseTransitionsColoring2007,franzUniversalitySATUNSATJamming2017}. In \cite{geigerJammingTransitionParadigm2019} and \cite{spiglerJammingTransitionOverparametrization2019}, the authors empirically explore the boundary between the under- and over-parameterized regions of neural networks, finding that their behavior near the interpolation threshold does, in fact, share similarities to jamming, falling in the same universality class as elliptical particles (in contrast to the jamming of spherical particles, which is seen in the perceptron). In particular, they found that this transition is sharp and has a discontinuous jump in the number of unsatisfied constraints, i.e. the number of data that are poorly fit, at the boundary. They furthermore argue that the number of unsatisfied constraints as a fraction the number of degrees of freedom is not sufficiently large enough to form local minima in the overparameterized regime, offering a simple explanation as to why such networks do not get stuck.
 
-\subsection{``Lazy Learning" in Over-Parameterized Networks}
+\subsection{Lazy Learning in Over-Parameterized Networks}
 
 By taking the limit as network width goes to infinity, a correspondence between wide neural networks and the so-called ``lazy-learning" regime has been established, resulting in a recent flurry of theoretical progress. In particular, \cite{jacotNeuralTangentKernel2018} showed that gradient-descent on network parameters corresponds to gradient-descent on network outputs with respect to a kernel known as the ``Neural Tangent Kernel" (NTK). In the infinite width limit, the NTK converges to a deterministic limiting kernel that depends only on the network architecture, is independent of parameter initialization, and is constant throughout training. This limit is referred to as the ``lazy learning" limit because the NTK does not depend on the data-set. Although the derivation is exact only in the infinite-width limit, experimental evidence in \cite{jacotNeuralTangentKernel2018} shows good agreement between both the training dynamics and final predictions of the limiting NTK machine and networks trained in the large but finite width setting across a variety of practical architectures. Further work in \cite{allen-zhuConvergenceTheoryDeep2019} proved that the training dynamics of finite but over-parameterized networks rapidly converge to those of the corresponding limiting NTK.\\
 
@@ -78,17 +80,55 @@ Despite its success in explaining some of the crucial features of training and g
 
  While \cite{allen-zhuConvergenceTheoryDeep2019} guarantees the convergence of lazy-trained networks, it is not immediately obvious that this regime is desirable. In particular, the role of feature learning in the ability of a neural network to generalize to unseen data is still poorly understood. Convolutional neural networks (CNNs) trained in the feature-learning regime have been found to outperform those trained in the lazy-learning regime, suggesting that lazy-learning does not account for the profound success of these networks \cite{chizatLazyTrainingDifferentiable2020}. On the other hand, \cite{geigerDisentanglingFeatureLazy2020} found lazy learning to out-perform feature learning in fully-connected networks (FCNs) with a degree of out-performance that depends on the data-set. This suggests that network architecture and the structure of data play important roles in determining which regime is better. The mechanisms at play, including the role of network depth and other architectural choices on the quality of the learned features and the effects of feature learning on the location of the interpolation threshold, are poorly understood and remain important open questions in modern machine learning. The authors of \cite{geigerDisentanglingFeatureLazy2020} remark that future studies of deep learning should note in which regime their study was conducted, as it is likely that this affects their results.
 
-\section{Methods and Results}
+\section{Methods}
 \subsection{The Model}
 
-In order to study the effects of feature-learning on the convergence and generalization capabilities of neural networks, we consider a variation of the random-features model analyzed in \cite{meiGeneralizationErrorRandom2019}. Recall that the random-features model can be described as a two-layer neural network with the first layer weights frozen at their randomly initialized values and the second layer weights freely optimized. We instead train both layers, periodically freezing the first layer and examining the properties of the feature-space spanned by the activations. \\
+In order to study the qualitative differences between lazy and feature learning and their relationships to the convergence and generalization capabilities of neural networks, we examine the properties of linear models of features produced by a neural network at various stages of training. \\
 
-Consider a scalar-valued two-layer neural network with inputs $x \in \mathbb R^d$, weights $w \in R^{h\times d}$ given by 
-$$
-    f(x, w, a) = \frac{1}{h}\sum_{i=1}^N a_i \sigma(x^Tw_i) 
-$$
-where $w_i \in \mathbb R^d$ is the $i^\text{th}$ row of w, $a_i \in \mathbb R$. For randomly initialized $w$, this is the RF model with $N$ degrees of freedom.
+Consider a scalar-valued fully-connected network with inputs $x\in \mathbb R^d$ and $L \geq  1$ hidden layers of constant width $h$. The pre-activation value of each layer is given recursively by
+\begin{equation}
+    z^1_i(x) = \sum_{j=1}^d W^1_{ij}x_j, \quad
+    z^l_i(x) = \sum_{j=1}^h W^l_{ij}\sigma(z^{l-1}_j(x)) \quad \text{for } l = 2,\ldots, L+1 \,,
+\end{equation}
+where $W^1 \in \mathbb R^{h\times d}$, $W^l \in \mathbb R^{h\times h}$ for $2\leq l \leq L$, and $W^{L+1} \in \mathbb R^{1 \times h}$, giving a total of $N = d\cdot h + (L-1)\cdot h^2 + h$ parameters. Here, $\sigma$ is a pointwise-nonlinear activation function, e.g. ReLU or tanh. The network output is then associated with the final layer, i.e. $f(x) = z^{L+1}(x)$. We consider training this neural network, initialized with $iid$ random values of $W^l_{ij}$, on a data-set $\mathcal D = \{(x_i, y_i) | i = 1\ldots P\}$ and loss function
+\begin{equation}
+    \mathcal L (f, \mathcal D) = \frac{1}{P}\sum_{i=1}^P \ell (f(x_i), y_i)\,,
+    \label{loss_function}
+\end{equation}
+for some single-sample loss function $\ell$.\\
 
+Throughout training, we periodically freeze the model weights and consider an auxiliary model given by a linear combination of post-activation values of the last hidden layer. We denote the weights and the corresponding pre-activations at time $t$ as $W^l(t)$ and $z^l(x, t)$. This auxiliary model can be expressed as
+\begin{equation}
+    \tilde f_t(x, a) = \sum_{i=1}^h a_i \sigma(z^L_i(x, t))\,,
+    \label{auxiliary}
+\end{equation}
+where $a = (a_1, \ldots, a_h)$ are the ``auxiliary parameters," i.e. the coefficients of the linear model. Note that at initialization, this formulation is equivalent to the RF model when $L=1$, and to a finite rank representation of the conjugate kernel (CK) or neural-network Gaussian process (NNGP), an alternative kernel representation to the NTK for deep and wide neural networks at initialization \cite{danielyDeeperUnderstandingNeural2017,leeDeepNeuralNetworks2018}, for $L\geq 2$. As the original model $f$ undergoes training, we expect the space spanned by the nonlinear features in equation \eqref{auxiliary} to evolve, corresponding to ``lazy" (random) features at initialization and to varying degrees of ``trained" features at later times. While these evolving features do not precisely correspond to the evolution of an NTK throughout the training process, it is a relatively simple model of evolving features that admits some interesting structure, and we hope that what we learn here can be extended to other characterizations of feature learning.\\
+
+We consider a ridge-regularized form of the loss function in \eqref{loss_function} for the auxiliary model, choosing the same scaling of relationship between the regularization amount, $\lambda$, and the number of auxiliary parameters $h$ and input dimensionality $d$ as was used in the asymptotic analysis of the random feature model in \cite{meiGeneralizationErrorRandom2019}. This yields the auxiliary loss function
+\begin{equation}
+    \tilde{\mathcal{L}} (\tilde f_t, \mathcal D, a, \lambda) = \mathcal L (\tilde f_t(\cdot, a), \mathcal D) + \frac{h \lambda}{d} ||a||_2^2\,.
+\end{equation}
+The addition of the ridge-regularization term serves a dual purpose. First, for convex loss function $\ell$ and non-zero regularization $\lambda$, the auxiliary loss is strictly convex and admits a unique solution $\hat a(\lambda)$. Second, 
+
+\subsection{Loss Function and Constraint Satisfaction}
+
+To gain a fine-grained perspective of how lazy- and learned-feature models differ, we consider binary classification with the squared-hinge loss function, allowing us to readily examine the structure of the jamming transition in the same manner as \cite{geigerJammingTransitionParadigm2019} and \cite{spiglerJammingTransitionOverparametrization2019}. The squared-hinge loss is given by
+\begin{equation}
+    \ell(f(x), y) = \frac{1}{2}\max(0, \Delta(f,(x) y))^2\,,
+\end{equation}
+where
+\begin{equation}
+    \Delta(f(x), y) = 1 - yf(x)\,.
+\end{equation}
+This loss leads to similar performance as the standard cross-entropy loss, but it more readily allows us to make analogies to jamming, and in particular, the constraint-satisfaction class of problems explored in \cite{krzakalaLandscapeAnalysisConstraint2007}. Only data points which have $\Delta(f(x), y) > 0$, corresponding to mis-classification or classification with insufficient margin, have non-zero contributions to the overall loss. We can count the number of such data points, which can be thought of as unsatisfied constraints, as 
+\begin{equation}
+    N_\Delta(f, \mathcal D) = \left|\{i \mid \Delta(f(x_i), y_i) > 0 \}\right|\,.
+\end{equation}
+This quantity and its relationship to convergence and generalization is of key interest. In the neural networks explored in he jamming transition corresponds to a discontinuous jump in the fraction of unsatisfied constraints that coincides with the interpolation threshold and the generalization cusp.
+
+\subsection{Optimization and Details of Setup}
+
+\section{Results}
 \subsection{Feature Learning Near the Generalization Cusp}
 \subsection{The Effects of Regularization}
 
@@ -98,7 +138,8 @@ Unclear if the lazy/feature learning regimes are even meaningful in the underpar
 Unclear whether the network I trained was in lazy or feature learning regimes, and unclear how this may have affected whether the changing first layer actually corresponded to feature learning.
 
 Unclear that using evolving first layer was an appropriate model for feature learning\\
-- could instead consider NTK at different times during training, but this is a bit odd because we are no longer taylor expanding around initialization but instead taylor expanding around different points in the training process. However, it's worth exploring how NTK feature space changes over time
+- could instead consider NTK at different times during training, but this is a bit odd because we are no longer taylor expanding around initialization but instead taylor expanding around different points in the training process. However, it's worth exploring how NTK feature space changes over time\\
+- Mind that this characterization does not correspond to the dynamical evolution of the NTK or any other previously discussed 
 - In order to study the gradual effects of the emergence of learned features, ..... (rather than the sharp transition we would have seen if we used values of alpha on either side of the lazy/feature learning transition)
 
 Still poorly understood:\\
