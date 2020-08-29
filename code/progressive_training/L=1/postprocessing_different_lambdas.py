@@ -28,7 +28,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 model_dir = 'models'
 model_names = os.listdir(model_dir)
 X_train, X_test, y_train, y_test = pickle.load(open('mnist.pkl', 'rb'))
-lambs = np.logspace(-15, -3, num=13)
+lambs = np.logspace(-15, 0, num=16)
 
 results = []
 
