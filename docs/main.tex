@@ -140,8 +140,9 @@ The jamming transition can be characterized as a discontinuous jump in the ratio
 While we train the feature network with loss defined by Equations \eqref{loss_function} and \eqref{hinge}, we consider a ridge-regularized form of the loss for the auxiliary model. This yields the auxiliary loss function
 \begin{equation}
     \tilde{\mathcal{L}} (\tilde f_t, \mathcal D, a, \lambda) = \mathcal L (\tilde f_t(\cdot, a), \mathcal D) + \frac{h \lambda}{d} ||a||_2^2\,,
+    \label{loss_reg}
 \end{equation}
-where the $\frac{h}{d}$ pre-factor in front of the ridge term allows the regularization parameter $\lambda$ to scale appropriately in the number of auxiliary parameters $h$ and input dimensionality $d$ as is seen in \cite{meiGeneralizationErrorRandom2019}. For positive $\lambda$, the auxiliary loss is strictly convex, as it is the sum of a convex and a strictly convex function, admitting a unique minimizer $\hat a(\lambda)$. In particular, the ridge-regularized hinge loss is equivalent to a support vector machine (SVM), and $\hat a(\lambda)$ can be quickly and easily evaluated with an SVM solver. 
+where the $\frac{h}{d}$ pre-factor in front of the ridge term allows the regularization parameter $\lambda$ to scale appropriately in the number of auxiliary parameters $h$ and input dimensionality $d$ as is seen in \cite{meiGeneralizationErrorRandom2019}. For positive $\lambda$, the auxiliary loss is strictly convex, as it is the sum of a convex and a strictly convex function, admitting a unique minimizer $\hat a(\lambda)$. In particular, the ridge-regularized hinge loss is equivalent to a support vector machine (SVM), and $\hat a(\lambda)$ can be quickly and easily evaluated with an SVM solver. We focus on small values of $\lambda$ in order to minimize any impact that regularization may have on the results.
 
 % Positive $\lambda$ also corresponds to early-stopping in gradient-descent over $a$ initialized at $a=0$, and the ridgeless limit $\lambda->0$
 
@@ -149,18 +150,14 @@ where the $\frac{h}{d}$ pre-factor in front of the ridge term allows the regular
 
 \subsection{Data and Implementation Details}
 
-All experiments were performed on the MNIST data-set, a collection of black and white handwritten digits [0-9] that are $28\times28$ pixels. The data was pre-procesed using PCA to reduce the input dimensionality to $d=20$, and the digits were split into two groups, even and odd, which were assigned target labels $1$ and $-1$, respectively. The training and test sets were each constructed from $P=5000$ disjoint random samples of the full data-set in order to allow the interpolation threshold to be found for relatively small values of $h$ and $N$ that could be handled by a personal laptop.\\
+All experiments were performed on the MNIST data-set, a collection of black and white handwritten digits [0-9] that are $28\times28$ pixels. The data was pre-procesed using PCA to reduce the input dimensionality to $d=20$, and the data were normalized to have norm $\sqrt{d}$. The digits were split into two groups, even and odd, which were assigned target labels $1$ and $-1$, respectively. The training and test sets were disjointly constructed from $P=5000$ random samples each from the full data-set in order to allow the interpolation threshold to be found for values of $h$ and $N$ that were relatively small and could be handled by a personal laptop. The search space consisted of $200$ logarithmically-spaced values of $h$ over the range $[1, 1.1 \cdot P]$ \\
 
-Training on the feature network was conducted in Tensorflow \cite{abadiTensorFlowLargeScaleMachine} using the Adam optimizer with fixed learning rate $lr=10^{-3}$ with parameters initialized according to the Tensorflow defaults, namely uniform on $[-\sigma, \sigma]$ with $\sigma^2 = 2 /(n_\text{in} + n_\text{out})$ for each layer, where $n_\text{in}$ is the dimensionality of the previous layer and $n_\text{out}$ is the dimensionalty of the following layer.
+Training on the feature network was conducted in Tensorflow \cite{abadiTensorFlowLargeScaleMachine} using the Adam optimizer with fixed learning rate $lr=10^{-3}$ for $10^6$ steps with batch size $B = 2000$.  Parameters were initialized according to the Tensorflow defaults, namely uniform on $[-\sigma, \sigma]$ where $\sigma^2 = 2 /(n_\text{in} + n_\text{out})$ for each layer, where $n_\text{in}$ is the dimensionality of the previous layer and $n_\text{out}$ is the dimensionalty of the following layer.\\
 
-The 
-TODO \\
+The values of the final hidden-layer activations of the feature network over the full training and testing sets were saved to disk at $90$ logarithmically-spaced times, and these features were normalized to have norm $\sqrt{h}$. The features of the training set input to a $L2$ regularized $L2$ SVM, corresponding to the regularized loss in Equation \eqref{loss_reg}. To minimize the effects of regularization on the results, it is everywhere set to $\lambda = 10^{-15}$ unless otherwise stated. The SVM was fit using the `liblinear` \cite{fanLIBLINEARLibraryLarge} solver that is packaged in the 
+\cite{pedregosaScikitlearnMachineLearning} python library.\\
 
-MNIST, P, test\_P, d, glorot initialization, adam in loss with lr, taking intermediate trained features at exponentially distributed times, SVM solver on auxiliary loss, etc.
-
-Because the results of all experiments were found to be qualitatively similar for the number of layers $L=1$ and $L=2$, all figures and discussions in the results section refer to $L=1$ unless otherwise specified. 
-
-Wherever not specified, results correspond to the auxiliary model $\tilde f$ trained to minimize the auxiliary loss $\tilde{\mathcal{L}}$ with near-vanishing regularization $\lambda=1\times10^{-13}$. Any training or testing loss reported are correspond to the auxiliary model's performance on the original (not auxiliary) loss $\mathcal L$.
+Because the results of all experiments were found to be qualitatively similar for the number of layers $L=1$ and $L=2$, all figures and discussions in the results section refer to $L=1$ unless otherwise specified. Any training or testing loss reported correspond to the auxiliary model's performance on the loss $\mathcal L$ without regularization.\\
 
 \section{Results}
 \label{Results}
